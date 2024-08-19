@@ -1,1 +1,263 @@
 # zabbix
+
+### Virtualizadores
+//VirtualBox
+//Vmware Player
+//ProxMox
+//Vmware ESXi
+//Microsoft Hyper-V
+
+### Sistemas operacionais
+//Ubuntu
+//Debian
+
+### VirtualBox
+//novo
+//	nome
+//		diretório padrão
+//			tipo linux
+//				debian11 64bits
+
+//memória 1024
+
+//criar disco virtual 8 gigas
+
+//tipo de imagem vdi
+
+//disco dinámico
+//	diretório padrão
+
+//configurações
+//	rede
+//		conectado a
+//			placa em modo bridge
+
+//audio
+//	desabilitado
+
+#### instalação debian
+//install
+//	idioma
+//		portugues (brasil)
+//			localidade
+//				brasil
+//					teclado
+//						portugues (brasil)
+
+//configurar usuário
+
+//adicionar localidade
+
+//particionamento
+
+//gerenciador de pacotes
+//	deb.debian.org
+
+[ ] ambiente de area de trabalho degbian
+[ ] gnome
+[x] servidor ssh
+[x] utilitários do sistema padrão
+
+//install	carregador grub
+
+### ProxMox
+//pve
+//	local pve
+//		content
+//			upload
+//				select from file
+//					dibian11.iso
+
+//pve
+//	mouse direito
+//		create vm
+
+//node
+//	pve
+
+//vm id
+//	padrão 109
+
+//nome da maquina
+
+//aba os
+//	iso imagem
+//		debian11.iso
+//			versão padrão
+//				type linux
+
+//system padrão
+
+//hard disk
+//	disk size 20 GB
+
+//cpu padrão
+
+//memória padrão
+
+//interface padrão vmbr0
+
+### vmware esxi
+//virtual machines
+//	create | register vm
+//		create a new virtual machine
+//			nome
+//				compatibilidade esxi 7 padrão
+//					familia de sistema operacional
+//						linux
+//							guest os version
+//								debian11(64bits)
+
+//selecionar hd
+
+//configurar cpu, memória e disco
+
+//interface vm network
+
+//cd/dvd
+//	data store iso file
+
+### vmware player
+//create a new virtual machine
+//	instalar disk image
+//		browser
+
+//linux
+//	version
+//		other linux 5x
+
+//nome
+
+//location
+
+//8 GB
+//	split
+
+### Hyper-V
+//novo
+//	maquina virtual
+//		nome
+//			primeira geração
+//				memória
+//					interface de rede
+//						disco 10 GB
+//							.iso
+//								instalar sistema operacional
+//									arquivo de imagem
+//										browser
+//											.iso
+
+//maquinas virtuais
+//	mouse direito
+//		iniciar
+
+### INSTALAÇÃO ZABBIX
+
+//apt update
+//apt upgrade
+//useradd zabbix
+
+//https://www.zabbix.com/documentation/current/en/manual/installation/install_from_packages
+
+//apt install -y wget build-essential
+//apt install -y apache2 apache2-utils
+//apt install -y libapache2-mod-php php php-mysql php-cli php-pear php-gmp php-gd
+//apt install -y php-bcmath php-curl php-xml php-zip
+//apt install -y mariadb-server mariadb-client
+//apt install -y snmpd snmp snmptrapd libsnmp-base libsnmp-dev
+
+##### SEGURANÇA ADICIONAL
+
+//mysql_secure_installation
+//change the root passward? [y/n] n (não)
+//remove aninymous users? [y/n] y (sim)
+//disallow root login remotely? [y/n] y (sim)
+//remove test database and access to it? [y/n] y (sim)
+//reload privilege tables now? [y/n] y (sim)
+
+##### OBRIGATÓRIO
+
+//mariadb -uroot -pp455w0rd
+//create database zabbix character set utf8mb4 collate utf8mb4_bin;
+//create user 'zabbix'@'localhost' identified by 'p455w0rd';
+//grant all privileges on zabbix.* to 'zabbix'@'localhost';
+//quit;
+
+//cd /tmp
+//wget https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-1+debian11_all.deb
+//dpkg -i zabbix-release_6.0-1+debian11_all.deb
+//apt update ; apt upgrade
+//apt install -y zabbix-server-mysql zabbix-sql-scripts zabbix-frontend-php zabbix-apache-conf zabbix-agent
+
+##### SERVIDOR
+//zabbix-server-mysql
+//zabbix-agent
+
+##### BANCO DE DADOS
+//zabbix-server-mysql
+//zabbix-sql-scripts
+//zabbix-agent
+
+##### FRONTEND
+//zabbix-frontend-php
+//zabbix-apache-conf
+//zabbix-agent
+
+##### POPULAR BANCO DE DADOS
+//zcat /usr/share/doc/zabbix-sql-scripts/mysql/server.sql.gz | mysql -uzabbix -pp455w0rd zabbix
+
+##### MUDAR A SENHA DO BANCO DE DADOS
+//nano /etc/zabbix/zabbix_server.conf
+//dbpassword=p455w0rd
+
+### MELHORIA OPCIONAL NO PHP
+
+//timedatectl set-timezone America/Sao_Paulo
+
+//nano /etc/zabbix/apache.conf
+//<ifmodule mod_php7.c>
+//php_value max_execution_time 300
+//php_value memory_limit 512m
+//php_value post_max_size 48m
+//php_value upload_max_filesize 24m
+//php_value max_input_time 300
+//php_value max_input_vars 10000
+//php_value always_populate_raw_post_data -1
+//php_value date.timezone America/Sao_Paulo
+//</ifmodule>
+
+### MELHORIA DE SEGURANÇA DO APACHE
+//nano /etc/apache2/sites-enabled/000-default.conf
+//<directory /var/www/html/>
+//options followsymlinks
+//allowoverride all
+//</directory>
+//a2enmod rewrite
+//sed -i 's/servertokens os/servertokens prod/' /etc/apache2/conf-avaliable/security.conf
+//sed -i 's/serversignature on/serversignature off/' /etc/apache2/conf-avaliable/security.conf
+
+### ATIVAR SERVIÇO E ACESSAR
+//systemctl enable zabbix-server zabbix-agent
+//systemctl restart zabbix-server zabbix-agent apache2
+//systemctl status zabbix-server
+
+//http://seu_ip_zabbixserver/zabbix
+
+### INSTALAÇÃO EM CAMADAS
+
+##### FRONTEND
+//apt update
+//apt upgrade
+//useradd zabbix
+
+//apt install -y wget build-essential
+//apt install -y apache2 apache2-utils
+//apt install -y libapache2-mod-php php php-mysql php-cli php-pear php-gmp php-gd
+//apt install -y php-bcmath php-curl php-xml php-zip
+//apt install -y snmpd snmp snmptrapd libsnmp-base libsnmp-dev
+
+//cd /tmp
+//wget https://repo.zabbix.com/zabbix/6.0/debian/pool/main/z/zabbix-release/zabbix-release_6.0-1+debian11_all.deb
+//dpkg -i zabbix-release_6.0-1+debian11_all.deb
+//apt update ; apt upgrade
+//apt install -y zabbix-server-mysql zabbix-sql-scripts zabbix-frontend-php zabbix-apache-conf zabbix-agent
